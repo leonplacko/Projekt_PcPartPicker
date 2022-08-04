@@ -6,12 +6,11 @@ use r2d2::PooledConnection;
 pub type DBPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 pub trait CRUD {
-    fn create(&self, conn: &DBPooledConnection) -> Result<PowerUnit, diesel::result::Error>;
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<PowerUnit>, diesel::result::Error>;
+    fn create(pu: NewPowerUnit, conn: &DBPooledConnection) -> Result<PowerUnit, diesel::result::Error>;
+    fn read_all(conn: &DBPooledConnection) -> Result<Vec<PowerUnit>, diesel::result::Error>;
     fn update(
-        &self,
         conn: &DBPooledConnection,
-        other: PowerUnit,
+        other: NewPowerUnit,
     ) -> Result<PowerUnit, diesel::result::Error>;
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error>;
+    fn delete(name_: String, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error>;
 }

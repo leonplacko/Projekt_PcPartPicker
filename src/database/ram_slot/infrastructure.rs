@@ -11,35 +11,34 @@ use schema::ram_slot;
 use schema::ram_slot::dsl::*;
 
 impl CRUD for RamSlot {
-    fn create(&self, conn: &DBPooledConnection) -> Result<RamSlot, diesel::result::Error> {
+    fn create(ramslot: NewRamSlot, conn: &DBPooledConnection) -> Result<RamSlot, diesel::result::Error> {
         diesel::insert_into(ram_slot::table)
-            .values(&*self)
+            .values(&ramslot)
             .get_result(conn)
     }
 
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<RamSlot>, diesel::result::Error> {
-        ram_slot.load::<RamSlot>(conn)
+    fn read(slotype: String, conn: &DBPooledConnection) -> Result<Vec<RamSlot>, diesel::result::Error> {
+        ram_slot.filter(type_.eq(slotype)).load::<RamSlot>(conn)
     }
 
     fn update(
-        &self,
         conn: &DBPooledConnection,
         other: RamSlot,
     ) -> Result<RamSlot, diesel::result::Error> {
         diesel::update(
             ram_slot
-                .filter(motherboard_id.eq(&self.motherboard_id))
-                .filter(ram_id.eq(&self.ram_id)),
+                .filter(motherboard_id.eq(&other.motherboard_id))
+                .filter(ram_id.eq(&other.ram_id)),
         )
         .set(type_.eq(other.type_))
         .get_result(conn)
     }
 
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
+    fn delete(mbid: Option<String>, ramid: Option<String>, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
         diesel::delete(
             ram_slot
-                .filter(motherboard_id.eq(&self.motherboard_id))
-                .filter(ram_id.eq(&self.ram_id)),
+                .filter(motherboard_id.eq(&mbid))
+                .filter(ram_id.eq(&ramid)),
         )
         .execute(conn)
     }

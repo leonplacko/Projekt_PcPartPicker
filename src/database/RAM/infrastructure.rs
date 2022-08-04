@@ -10,29 +10,36 @@ use diesel::QueryDsl;
 use schema::ram;
 use schema::ram::dsl::*;
 
-impl CRUD for RAM {
-    fn create(&self, conn: &DBPooledConnection) -> Result<RAM, diesel::result::Error> {
-        let n_ram = NewRAM {
-            name: self.name.clone(),
-            manufacturer: self.manufacturer.clone(),
-            speed: self.speed,
-            capacity: self.capacity,
-            price: self.price,
-        };
+use super::handle_ram_slot::*;
 
-        diesel::insert_into(ram::table)
+impl CRUD for RAM {
+    fn create(ram_: ExtendRAM, conn: &DBPooledConnection) -> Result<RAM, diesel::result::Error> {
+        
+        let ramslot = ram_.slot.clone();
+
+        let n_ram = NewRAM::from(ram_);
+
+        let rez1 = diesel::insert_into(ram::table)
             .values(&n_ram)
-            .get_result(conn)
+            .get_result::<RAM>(conn);
+        
+        match rez1{
+            Err(er) => Err(er),
+            Ok(val) => match handle_ram_slot_insert(ramslot, conn, val.id.clone()){
+                Ok(_) => Ok(val),
+                Err(er) => Err(er),
+            }
+        }
+
     }
 
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<RAM>, diesel::result::Error> {
+    fn read_all(conn: &DBPooledConnection) -> Result<Vec<RAM>, diesel::result::Error> {
         ram.load::<RAM>(conn)
     }
 
-    fn update(&self, conn: &DBPooledConnection, other: RAM) -> Result<RAM, diesel::result::Error> {
-        diesel::update(ram.filter(name.eq(&self.name)))
+    fn update(conn: &DBPooledConnection, other: NewRAM) -> Result<RAM, diesel::result::Error> {
+        diesel::update(ram.filter(name.eq(other.name)))
             .set((
-                name.eq(other.name),
                 manufacturer.eq(other.manufacturer),
                 capacity.eq(other.capacity),
                 speed.eq(other.speed),
@@ -41,7 +48,9 @@ impl CRUD for RAM {
             .get_result(conn)
     }
 
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
-        diesel::delete(ram.filter(name.eq(&self.name))).execute(conn)
+    fn delete(name_: String, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
+                        
+        diesel::delete(ram.filter(name.eq(&name_))).execute(conn)
+        
     }
 }

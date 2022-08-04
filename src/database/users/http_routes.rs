@@ -16,12 +16,12 @@ use super::data::*;
 pub type DBPool = Pool<ConnectionManager<PgConnection>>;
 
 
-async fn checkin(val: User, hashed_pass: String, id: Identity) -> HttpResponse{
+fn checkin(val: User, hashed_pass: String, id: Identity) -> HttpResponse{
     if let Some(_) = id.identity(){
         return ErrorHandler::Unauthorized("User already logged in").get_response()
     }else if val.password == hashed_pass{
         let user_remember = format!("{}:{}", val.username.clone(), val.isadmin.to_string());
-        let a = id.identity();
+        //let a = id.identity();
         id.remember(user_remember.clone());
         return HttpResponse::Ok().content_type("application/json").json(format!("Succesful login with identity: {}", user_remember.clone()))
     }else{
@@ -69,14 +69,21 @@ pub async fn register(conn: Data<DBPool>, data: Json<NewUser>) -> HttpResponse{
     if result == data.0.username.clone(){
         return ErrorHandler::BadRequest("User already exists").get_response()
     }else if result.len() != 0{
-        return ErrorHandler::InternalServerError((format!("Error with diesel query: {}", result))).get_response()
+        return ErrorHandler::InternalServerError(format!("Error with diesel query: {}", result)).get_response()
     }else{
         
         let user = data.0;
-        match User::create(user, &pool){
-            Ok(val) => HttpResponse::Ok().content_type("application/json").json(format!("Inserted user with id: {}", val.id)),
-            Err(er) => ErrorHandler::from(er).get_response(),
+        if user.password.clone().trim().len() == 0{
+            return ErrorHandler::BadRequest("Empty password").get_response()
+        }else{
+
+            return match User::create(user, &pool){
+                Ok(val) => HttpResponse::Ok().content_type("application/json").json(format!("Inserted user with id: {}", val.id)),
+                Err(er) => ErrorHandler::from(er).get_response(),
+            }
+
         }
+        
          
     }
 }
@@ -91,7 +98,7 @@ pub async fn login(conn: Data<DBPool>, data: Json<UserLog>, id: Identity) -> Htt
     
 
     match myuser{
-        Ok(val) => checkin(val, hashed_pass, id).await,    
+        Ok(val) => checkin(val, hashed_pass, id),    
         Err(er) => ErrorHandler::from(er).get_response(),
     }
 

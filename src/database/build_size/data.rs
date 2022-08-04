@@ -2,10 +2,17 @@ use serde::{Serialize, Deserialize};
 
 use crate::database::schema::build_size;
 
-#[derive(Queryable, Debug, Insertable, Serialize, Deserialize)]
-#[table_name = "build_size"]
+#[derive(Queryable, Debug, Serialize)]
 pub struct BuildSize {
-    pub motherboard_id: String,
-    pub case_id: String,
+    pub id: String,
+    pub motherboard_id: Option<String>,
+    pub case_id: Option<String>,
+    pub size: String,
+}
+#[derive(Insertable, Deserialize)]
+#[table_name = "build_size"]
+pub struct NewBuildSize{
+    pub motherboard_id: Option<String>,
+    pub case_id: Option<String>,
     pub size: String,
 }

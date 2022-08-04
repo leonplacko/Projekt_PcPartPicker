@@ -11,18 +11,17 @@ use schema::storage_slots;
 use schema::storage_slots::dsl::*;
 
 impl CRUD for STRGslots {
-    fn create(&self, conn: &DBPooledConnection) -> Result<STRGslots, diesel::result::Error> {
+    fn create(storslot: NewSTRGslots, conn: &DBPooledConnection) -> Result<STRGslots, diesel::result::Error> {
         diesel::insert_into(storage_slots::table)
-            .values(&*self)
+            .values(&storslot)
             .get_result(conn)
     }
 
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<STRGslots>, diesel::result::Error> {
-        storage_slots.load::<STRGslots>(conn)
+    fn read(slott: String, conn: &DBPooledConnection) -> Result<Vec<STRGslots>, diesel::result::Error> {
+        storage_slots.filter(slot.eq(&slott)).load::<STRGslots>(conn)
     }
 
     fn update(
-        &self,
         conn: &DBPooledConnection,
         other: STRGslots,
     ) -> Result<STRGslots, diesel::result::Error> {
@@ -35,11 +34,11 @@ impl CRUD for STRGslots {
         .get_result(conn)
     }
 
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
+    fn delete(mbid: Option<String>, storid: Option<String>, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
         diesel::delete(
             storage_slots
-                .filter(motherboard_id.eq(&self.motherboard_id))
-                .filter(storage_id.eq(&self.storage_id)),
+                .filter(motherboard_id.eq(&mbid))
+                .filter(storage_id.eq(&storid)),
         )
         .execute(conn)
     }

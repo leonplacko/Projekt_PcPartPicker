@@ -1,7 +1,8 @@
 table! {
-    build_size (motherboard_id, case_id) {
-        motherboard_id -> Varchar,
-        case_id -> Varchar,
+    build_size (id) {
+        id -> Varchar,
+        motherboard_id -> Nullable<Varchar>,
+        case_id -> Nullable<Varchar>,
         size -> Varchar,
     }
 }
@@ -95,26 +96,29 @@ table! {
 }
 
 table! {
-    ram_slot (motherboard_id, ram_id) {
-        motherboard_id -> Varchar,
-        ram_id -> Varchar,
+    ram_slot (id) {
+        id -> Varchar,
+        motherboard_id -> Nullable<Varchar>,
+        ram_id -> Nullable<Varchar>,
         #[sql_name = "type"]
         type_ -> Varchar,
     }
 }
 
 table! {
-    socket (motherboard_id, cpu_id) {
-        motherboard_id -> Varchar,
-        cpu_id -> Varchar,
+    socket (id) {
+        id -> Varchar,
+        motherboard_id -> Nullable<Varchar>,
+        cpu_id -> Nullable<Varchar>,
         socket_type -> Varchar,
     }
 }
 
 table! {
-    storage_slots (motherboard_id, storage_id) {
-        motherboard_id -> Varchar,
-        storage_id -> Varchar,
+    storage_slots (id) {
+        id -> Varchar,
+        motherboard_id -> Nullable<Varchar>,
+        storage_id -> Nullable<Varchar>,
         slot -> Varchar,
     }
 }

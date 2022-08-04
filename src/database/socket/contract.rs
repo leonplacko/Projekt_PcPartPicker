@@ -6,8 +6,8 @@ use r2d2::PooledConnection;
 pub type DBPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 pub trait CRUD {
-    fn create(&self, conn: &DBPooledConnection) -> Result<Socket, diesel::result::Error>;
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<Socket>, diesel::result::Error>;
-    fn update(&self, conn: &DBPooledConnection, other: Socket) -> Result<Socket, diesel::result::Error>;
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error>;
+    fn create(sock: NewSocket, conn: &DBPooledConnection) -> Result<Socket, diesel::result::Error>;
+    fn read(sockt: String, conn: &DBPooledConnection) -> Result<Vec<Socket>, diesel::result::Error>;
+    fn update(conn: &DBPooledConnection, other: Socket) -> Result<Socket, diesel::result::Error>;
+    fn delete(mbid: Option<String>, cpuid: Option<String>, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error>;
 }

@@ -11,31 +11,23 @@ use schema::power_unit;
 use schema::power_unit::dsl::*;
 
 impl CRUD for PowerUnit {
-    fn create(&self, conn: &DBPooledConnection) -> Result<PowerUnit, diesel::result::Error> {
-        let pu = NewPowerUnit {
-            name: self.name.clone(),
-            manufacturer: self.manufacturer.clone(),
-            power: self.power,
-            price: self.price,
-        };
-
+    fn create(pu: NewPowerUnit, conn: &DBPooledConnection) -> Result<PowerUnit, diesel::result::Error> {
+        
         diesel::insert_into(power_unit::table)
             .values(&pu)
             .get_result(conn)
     }
 
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<PowerUnit>, diesel::result::Error> {
+    fn read_all(conn: &DBPooledConnection) -> Result<Vec<PowerUnit>, diesel::result::Error> {
         power_unit.load::<PowerUnit>(conn)
     }
 
     fn update(
-        &self,
         conn: &DBPooledConnection,
-        other: PowerUnit,
+        other: NewPowerUnit,
     ) -> Result<PowerUnit, diesel::result::Error> {
-        diesel::update(power_unit.filter(name.eq(&self.name)))
+        diesel::update(power_unit.filter(name.eq(other.name)))
             .set((
-                name.eq(other.name),
                 manufacturer.eq(other.manufacturer),
                 power.eq(other.power),
                 price.eq(other.price),
@@ -43,7 +35,7 @@ impl CRUD for PowerUnit {
             .get_result(conn)
     }
 
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
-        diesel::delete(power_unit.filter(name.eq(&self.name))).execute(conn)
+    fn delete(name_: String, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
+        diesel::delete(power_unit.filter(name.eq(name_))).execute(conn)
     }
 }

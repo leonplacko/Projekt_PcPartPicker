@@ -2,18 +2,31 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 pub struct UserRequest{
-    price: f32,
-    priority: Option<String>,
+    pub price: f32,
+    pub priority: Option<String>,
 }
 
-#[derive(Deserialize, Serialize)]
-pub struct TheBuild{
-    motherboard_name: String,
-    cpu_name: String,
-    gpu_name: String,
-    storage_name: Vec<String>,
-    ram_name: Vec<String>,
-    pu_name: String,
-    case_name: String,
-    cooling: Vec<String>,
+#[derive(Serialize)]
+pub struct GeneratedBuild{
+    pub motherboard_name: String,
+    pub cpu_name: String,
+    pub gpu_name: String,
+    pub storage_name: Vec<String>,
+    pub ram_name: Vec<String>,
+    pub pu_name: String,
+    pub case_name: String,
+    pub cooling: Vec<String>,
+    pub price: f32,
+}
+
+#[derive(Deserialize)]
+pub struct GetBuild{
+    pub motherboard_name: String,
+    pub cpu_name: String,
+    pub gpu_name: String,
+    pub storage_name: Vec<String>,
+    pub ram_name: Vec<String>,
+    pub pu_name: String,
+    pub case_name: String,
+    pub cooling: Vec<String>,
 }

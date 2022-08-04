@@ -11,32 +11,23 @@ use schema::cooling;
 use schema::cooling::dsl::*;
 
 impl CRUD for Cooling {
-    fn create(&self, conn: &DBPooledConnection) -> Result<Cooling, diesel::result::Error> {
-        let cool = NewCooling {
-            name: self.name.clone(),
-            manufacturer: self.manufacturer.clone(),
-            ventilators: self.ventilators,
-            cpu_ventilator: self.cpu_ventilator,
-            price: self.price,
-        };
-
+    fn create(cool: NewCooling, conn: &DBPooledConnection) -> Result<Cooling, diesel::result::Error> {
+        
         diesel::insert_into(cooling::table)
             .values(&cool)
             .get_result(conn)
     }
 
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<Cooling>, diesel::result::Error> {
+    fn read_all(conn: &DBPooledConnection) -> Result<Vec<Cooling>, diesel::result::Error> {
         cooling.load::<Cooling>(conn)
     }
 
     fn update(
-        &self,
         conn: &DBPooledConnection,
-        other: Cooling,
+        other: NewCooling,
     ) -> Result<Cooling, diesel::result::Error> {
-        diesel::update(cooling.filter(name.eq(&self.name)))
+        diesel::update(cooling.filter(name.eq(other.name)))
             .set((
-                name.eq(other.name),
                 manufacturer.eq(other.manufacturer),
                 ventilators.eq(other.ventilators),
                 cpu_ventilator.eq(other.cpu_ventilator),
@@ -45,7 +36,7 @@ impl CRUD for Cooling {
             .get_result(conn)
     }
 
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
-        diesel::delete(cooling.filter(name.eq(&self.name))).execute(conn)
+    fn delete(name_: String, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
+        diesel::delete(cooling.filter(name.eq(name_))).execute(conn)
     }
 }

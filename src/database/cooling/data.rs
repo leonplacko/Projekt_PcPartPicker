@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::database::schema::cooling;
 
-#[derive(Queryable, Debug)]
+#[derive(Queryable, Debug, Serialize)]
 pub struct Cooling {
     pub id: String,
     pub name: String,
@@ -12,7 +12,7 @@ pub struct Cooling {
     pub price: f32,
 }
 
-#[derive(Insertable, Serialize, Deserialize)]
+#[derive(Insertable,  Deserialize)]
 #[table_name = "cooling"]
 pub struct NewCooling {
     pub name: String,

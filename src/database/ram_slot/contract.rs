@@ -6,9 +6,9 @@ use r2d2::PooledConnection;
 pub type DBPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 pub trait CRUD {
-    fn create(&self, conn: &DBPooledConnection) -> Result<RamSlot, diesel::result::Error>;
-    fn read_all(&self, conn: &DBPooledConnection) -> Result<Vec<RamSlot>, diesel::result::Error>;
-    fn update(&self, conn: &DBPooledConnection, other: RamSlot)
+    fn create(ramslot: NewRamSlot, conn: &DBPooledConnection) -> Result<RamSlot, diesel::result::Error>;
+    fn read(slotype: String, conn: &DBPooledConnection) -> Result<Vec<RamSlot>, diesel::result::Error>;
+    fn update(conn: &DBPooledConnection, other: RamSlot)
         -> Result<RamSlot, diesel::result::Error>;
-    fn delete(&self, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error>;
+    fn delete(mbid: Option<String>, ramid: Option<String>, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error>;
 }

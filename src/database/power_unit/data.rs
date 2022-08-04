@@ -2,7 +2,7 @@ use serde::{Serialize, Deserialize};
 
 use crate::database::schema::power_unit;
 
-#[derive(Queryable, Debug)]
+#[derive(Queryable, Debug, Serialize)]
 pub struct PowerUnit {
     pub id: String,
     pub name: String,
@@ -11,7 +11,7 @@ pub struct PowerUnit {
     pub price: f32,
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize)]
+#[derive(Queryable, Insertable, Deserialize)]
 #[table_name = "power_unit"]
 pub struct NewPowerUnit {
     pub name: String,
