@@ -8,41 +8,41 @@ use crate::database::{
 use super::contract::DBPooledConnection;
 
 fn handle(storslot: String, conn: &DBPooledConnection, id_: String) -> Result<(), diesel::result::Error>{
-    let buildsize_data = STRGslots::read(storslot.clone(), conn);
+    let storslot_data = STRGslots::read(storslot.clone(), conn);
 
-    if let Ok(val) = buildsize_data{
-        
-        for data in val{
-            let build = NewSTRGslots{
-                motherboard_id: Some(id_.clone()),
-                storage_id: data.storage_id.clone(),
-                slot: storslot.clone(),
-            };
-            let rez = STRGslots::create(build, conn);
-            if let Err(er) = rez{
-                return Err(er);
+    match storslot_data{
+        Ok(val) => {
+            if val.len() == 0{
+                let new_storslot = NewSTRGslots{
+                    motherboard_id: Some(id_.clone()),
+                    storage_id: None,
+                    slot: storslot.clone(),
+                };
+                let rez = STRGslots::create(new_storslot, conn);
+                if let Err(er) = rez{
+                    return Err(er);
+                }else{
+                    return Ok(())
+                } 
             }else{
-                continue;
-            }            
-        }
-        return Ok(())
-    }else if let Err(diesel::result::Error::NotFound) = buildsize_data{
-        let new_storslot = NewSTRGslots{
-            motherboard_id: Some(id_.clone()),
-            storage_id: None,
-            slot: storslot.clone(),
-        };
-        let rez = STRGslots::create(new_storslot, conn);
-        if let Err(er) = rez{
-            return Err(er);
-        }else{
-            return Ok(())
-        } 
-    }else if let Err(er) = buildsize_data{
-        return Err(er);
-    }else{
-        println!("Unindentified case");
-        return Ok(())
+                for data in val{
+                    let build = NewSTRGslots{
+                        motherboard_id: Some(id_.clone()),
+                        storage_id: data.storage_id.clone(),
+                        slot: storslot.clone(),
+                    };
+                    let rez = STRGslots::create(build, conn);
+                    if let Err(er) = rez{
+                        return Err(er);
+                    }else{
+                        continue;
+                    }            
+                }
+                return Ok(())
+            }
+        },
+
+        Err(er) => Err(er),
     }
 }
 

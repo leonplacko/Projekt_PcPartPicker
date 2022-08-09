@@ -48,8 +48,6 @@ pub async fn get_cpu(conn: Data<DBPool>, id: Identity) -> HttpResponse{
 pub async fn insert_cpu(conn: Data<DBPool>, id: Identity, data: Json<ExtendCPU>) -> HttpResponse{
     let pool = conn.get().expect("Error connecting to pool");
 
-    println!("prošao");
-
     match check_admin(&id){
         (false, er) => er,
         (true, _) => match CPU::create(data.0, &pool){

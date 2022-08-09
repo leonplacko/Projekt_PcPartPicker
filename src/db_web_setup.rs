@@ -7,11 +7,12 @@ use crate::database::{
     power_unit::http_routes as PowerUnitHttp,
     RAM::http_routes as RamHttp,
     storage::http_routes as StorageHttp,
+    users::http_routes as UserHttp,
 };
 
 use crate::generate_build::generate_build::*;
 
-use actix_web::web;
+use actix_web::{web, get, HttpResponse};
 use diesel::r2d2::ConnectionManager;
 use diesel::PgConnection;
 use r2d2::{Pool, PooledConnection};
@@ -22,6 +23,11 @@ use std::hash::{Hash, Hasher};
 pub type DBPool = Pool<ConnectionManager<PgConnection>>;
 pub type DBPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
+
+#[get("/")]
+async fn intro() -> HttpResponse{
+    HttpResponse::Ok().body("Welcome to PcPartPicker!")
+}
 
 pub async fn params() -> (String, String) {
     let domain: String = std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
@@ -84,8 +90,15 @@ pub fn myconfig(cfg: &mut web::ServiceConfig){
     cfg.service(web::resource("ram/delete").route(web::delete().to(RamHttp::delete_ram)));
 
     //GENERATOR
-    cfg.service(web::resource("user/{username}/create_build").route(web::get().to(gen_price)));
-    cfg.service(web::resource("user/{username}/validate_build").route(web::post().to(val_build)));
+    cfg.service(web::resource("user/{username}/create_build").route(web::post().to(gen_price)));
+    //cfg.service(web::resource("user/{username}/validate_build").route(web::post().to(val_build)));
+
+    //USER
+    cfg.service(web::resource("user").route(web::get().to(UserHttp::get_users)));    
+    cfg.service(web::resource("user/register").route(web::post().to(UserHttp::register)));
+    cfg.service(web::resource("user/login").route(web::post().to(UserHttp::login)));
+    cfg.service(web::resource("user/logout").route(web::post().to(UserHttp::logout)));
+    cfg.service(intro);
 }
 
 

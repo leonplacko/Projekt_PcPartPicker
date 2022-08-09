@@ -5,7 +5,7 @@ extern crate dotenv;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use actix_web::cookie::time::{Duration as cDuration};
 use actix_web::web::Data;
-use actix_web::{get, middleware, web, App, HttpServer, HttpResponse};
+use actix_web::{middleware, web, App, HttpServer};
 use std::env;
 
 
@@ -15,12 +15,6 @@ pub mod db_web_setup;
 pub mod response_error_handling;
 
 use db_web_setup::*;
-use database::*;
-
-#[get("/")]
-async fn test() -> HttpResponse{
-    HttpResponse::Ok().body("Welcome to PcPartPicker!")
-}
 
 
 
@@ -48,24 +42,8 @@ async fn main() -> std::io::Result<()> {
             ))
             .app_data(Data::new(conn_pool.clone()))
             .app_data(web::JsonConfig::default().limit(4096))
-            .service(web::scope("/").configure(myconfig))
-            .service(
-                web::resource("/user")
-                .route(web::get().to(users::http_routes::get_users))                
-            )
-            .service(
-                web::resource("/user/register")
-                .route(web::post().to(users::http_routes::register))
-            )
-            .service(
-                web::resource("/user/login")
-                .route(web::post().to(users::http_routes::login))
-            )
-            .service(
-                web::resource("/user/logout")
-                .route(web::post().to(users::http_routes::logout))
-            )
-            .service(test)
+            .service(web::scope("").configure(myconfig))
+            
     })
     .bind(("127.0.0.1", 8080))?
     .run()

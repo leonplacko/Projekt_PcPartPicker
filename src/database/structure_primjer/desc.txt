@@ -1,0 +1,99 @@
+# Structure
+
+Application code is located in `src/` directory.
+More complex SQL queries are stored in `sql/` with same directory structure as the unit they are called in.
+Migrations are stored in `migrations/` directory and are in folders with their name and timestamp of their creation so they are executed in sequential order.
+
+## Structure of src/
+
+### Application business logic
+
+Application business logic and main code is located under `src/app/` and all the features are located under their own directory that contains:
+
+#### contract.rs
+
+file where traits are held that define all the requirements of that feature and its signature methods
+
+#### data.rs
+
+file where this features data structures are held (those that are used only for that specific feature)
+
+#### domain.rs
+
+this is the core of the feature business logic, and most of the application tests are located here.
+
+#### http.rs
+
+this is the holder of all the routes for this application and their tests.
+
+Handling routes when we implement multiple API versions:
+
+```rust
+/// GET /api/{version}/some-rote
+pub fn handle_some_route(req: actix_web::HttpRequest) -> actix_web::HttpResponse {
+  // Has only one version
+  actix_web::HttpResponse::Ok().finish()
+}
+
+// After 2nd version of the route is added
+/// GET /api/{version}/some-rote
+pub fn handle_some_route(req: actix_web::HttpRequest) -> HttpResponse {
+  match crate::helpers::http::get_api_version(&req).as_ref() {
+    "v2" => handle_some_route_v2(req),
+    _ => handle_some_route_v1(req),
+  }
+}
+```
+
+#### infrastructure.rs
+
+This is where all the "glue" code of you feature will come in play, this is where all the contracts defined in `contract.rs` will get their struct implementations with real
+connections to whatever infrastructure they are calling/using. (database connections, email services, etc)
+
+#### setup.rs
+
+This is the other part of the "glue" code where the application will attach you feature to itself through `src/infrastructure/routes.rs`
+
+### Infrastructure code
+
+In directory `src/infrastructure` we have global application "glue" code that stiches everything together:
+
+#### db.rs
+
+All of the database connections will be defined in here together with their pools in simple pack structs that combine everything
+
+#### routes.rs
+
+This is the "glue" for all the features we went through under applications section
+
+#### state.rs
+
+This is where global application state is defined and is passed through every request. It contains db connections on it, and services everything in the "glue" code from app to features that requires any db connections.
+
+### Database models
+
+In directory `src/models` we will hold all the models and their struct variants we are using through the application: USE COMMON SENSE about what comes in the model and what goes into feature data.
+
+### Database views
+
+In directory `src/views` all the models that will represent our database views will be held in here.
+
+### Services
+
+This is where code that provides some kind of general service through the application comes in.
+
+## Global application config
+
+Application config getter and provider is located under `src/config.rs`, but you probably won't have to edit anything on it.
+
+It is available as read only constant through the whole application and you can allways call it with `crate::R`.
+
+## Other
+
+You will notice the `src/schema.rs`, `src/virtual_schema.rs` and `src/view_schema.rs`, DO NOT EDIT THE `src/schema.rs` file yourself. That one is generated automatically by diesel crate after each migration and it represents each table in the database genereted by migrations.
+
+On the other hand, you have the `src/virtual_schema.rs` this is where we will define our "virtual" tables which are usually representation of two or more tables combined and is used for models that represent any kind of SQL join where we are querying more then one table.
+
+`src/view_schema.rs` is representation of all the views we implement.
+
+`src/helpers/` - This is a place for quick functions and extractors used through entire application. With time we might end up without this file since most of it can be later moved into `src/services` directory.
