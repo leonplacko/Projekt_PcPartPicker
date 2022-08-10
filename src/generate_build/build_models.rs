@@ -1,14 +1,14 @@
-use serde::{Deserialize, Serialize};
 use crate::database::motherboard::data::Motherboard;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
-pub struct UserRequest{
+pub struct UserRequest {
     pub price: f32,
     pub priority: Option<String>,
 }
 
 #[derive(Serialize)]
-pub struct GeneratedBuild{
+pub struct GeneratedBuild {
     pub motherboard_name: String,
     pub cpu_name: String,
     pub gpu_name: String,
@@ -21,7 +21,7 @@ pub struct GeneratedBuild{
 }
 
 #[derive(Deserialize)]
-pub struct GetBuild{
+pub struct GetBuild {
     pub motherboard_name: String,
     pub cpu_name: String,
     pub gpu_name: String,
@@ -33,7 +33,7 @@ pub struct GetBuild{
 }
 
 #[derive(Queryable, Debug, Serialize)]
-pub struct JoinedData{
+pub struct JoinedData {
     pub mb: Motherboard,
     pub cpu_name: String,
     pub stor_name: String,
@@ -43,5 +43,5 @@ pub struct JoinedData{
     pub cpu_price: f32,
     pub stor_price: f32,
     pub ram_price: f32,
-    pub case_price: f32
+    pub case_price: f32,
 }

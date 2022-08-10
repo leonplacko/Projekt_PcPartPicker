@@ -24,7 +24,7 @@ pub struct NewStorage {
     pub price: f32,
 }
 #[derive(Deserialize)]
-pub struct ExtendStorage{
+pub struct ExtendStorage {
     pub name: String,
     pub manufacturer: String,
     pub capacity: i32,
@@ -34,9 +34,9 @@ pub struct ExtendStorage{
     pub slot: String,
 }
 
-impl From<ExtendStorage> for NewStorage{
+impl From<ExtendStorage> for NewStorage {
     fn from(exstor: ExtendStorage) -> Self {
-        NewStorage{
+        NewStorage {
             name: exstor.name.to_owned(),
             manufacturer: exstor.manufacturer.to_owned(),
             capacity: exstor.capacity.to_owned(),
@@ -46,4 +46,3 @@ impl From<ExtendStorage> for NewStorage{
         }
     }
 }
-

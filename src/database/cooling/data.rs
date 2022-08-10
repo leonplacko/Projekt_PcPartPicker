@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::database::schema::cooling;
 
@@ -12,7 +12,7 @@ pub struct Cooling {
     pub price: f32,
 }
 
-#[derive(Insertable,  Deserialize)]
+#[derive(Insertable, Deserialize)]
 #[table_name = "cooling"]
 pub struct NewCooling {
     pub name: String,

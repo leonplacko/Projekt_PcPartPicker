@@ -14,7 +14,6 @@ use super::handle_ram_slot::*;
 
 impl CRUD for RAM {
     fn create(ram_: ExtendRAM, conn: &DBPooledConnection) -> Result<RAM, diesel::result::Error> {
-        
         let ramslot = ram_.slot.clone();
 
         let n_ram = NewRAM::from(ram_);
@@ -22,15 +21,14 @@ impl CRUD for RAM {
         let rez1 = diesel::insert_into(ram::table)
             .values(&n_ram)
             .get_result::<RAM>(conn);
-        
-        match rez1{
+
+        match rez1 {
             Err(er) => Err(er),
-            Ok(val) => match handle_ram_slot_insert(ramslot, conn, val.id.clone()){
+            Ok(val) => match handle_ram_slot_insert(ramslot, conn, val.id.clone()) {
                 Ok(_) => Ok(val),
                 Err(er) => Err(er),
-            }
+            },
         }
-
     }
 
     fn read_all(conn: &DBPooledConnection) -> Result<Vec<RAM>, diesel::result::Error> {
@@ -49,8 +47,6 @@ impl CRUD for RAM {
     }
 
     fn delete(name_: String, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
-                        
         diesel::delete(ram.filter(name.eq(&name_))).execute(conn)
-        
     }
 }

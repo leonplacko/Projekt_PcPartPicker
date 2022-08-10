@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::database::schema::pc_case;
 
@@ -35,10 +35,9 @@ pub struct ExtendCase {
     pub build_size: String,
 }
 
-
-impl From<ExtendCase> for NewCase{
+impl From<ExtendCase> for NewCase {
     fn from(ex: ExtendCase) -> Self {
-        NewCase{
+        NewCase {
             name: ex.name.to_owned(),
             manufacturer: ex.manufacturer.to_owned(),
             dimensions: ex.dimensions.to_owned(),

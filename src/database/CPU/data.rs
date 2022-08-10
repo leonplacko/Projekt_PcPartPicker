@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::database::schema::cpu;
 
@@ -26,7 +26,7 @@ pub struct NewCPU {
     pub price: f32,
 }
 #[derive(Deserialize)]
-pub struct ExtendCPU{
+pub struct ExtendCPU {
     pub name: String,
     pub manufacturer: String,
     pub cores: i32,
@@ -34,12 +34,12 @@ pub struct ExtendCPU{
     pub speed: f32,
     pub tdp: i32,
     pub price: f32,
-    pub socket: String, 
+    pub socket: String,
 }
 
-impl From<ExtendCPU> for NewCPU{
+impl From<ExtendCPU> for NewCPU {
     fn from(excpu: ExtendCPU) -> Self {
-        NewCPU{
+        NewCPU {
             name: excpu.name.to_owned(),
             manufacturer: excpu.manufacturer.to_owned(),
             cores: excpu.cores.to_owned(),

@@ -6,7 +6,10 @@ use r2d2::PooledConnection;
 pub type DBPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 pub trait CRUD {
-    fn create(mb: ExtendMotherboard, conn: &DBPooledConnection) -> Result<Motherboard, diesel::result::Error>;
+    fn create(
+        mb: ExtendMotherboard,
+        conn: &DBPooledConnection,
+    ) -> Result<Motherboard, diesel::result::Error>;
     fn read(conn: &DBPooledConnection) -> Result<Vec<Motherboard>, diesel::result::Error>;
     fn update(
         conn: &DBPooledConnection,

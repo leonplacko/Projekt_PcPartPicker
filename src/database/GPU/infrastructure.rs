@@ -12,7 +12,6 @@ use schema::gpu::dsl::*;
 
 impl CRUD for GPU {
     fn create(gp: NewGPU, conn: &DBPooledConnection) -> Result<GPU, diesel::result::Error> {
-        
         diesel::insert_into(gpu::table).values(&gp).get_result(conn)
     }
 

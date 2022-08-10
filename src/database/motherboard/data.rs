@@ -24,7 +24,7 @@ pub struct NewMotherboard {
 }
 
 #[derive(Deserialize)]
-pub struct ExtendMotherboard{
+pub struct ExtendMotherboard {
     pub name: String,
     pub manufacturer: String,
     pub ram_slots: i32,
@@ -36,9 +36,9 @@ pub struct ExtendMotherboard{
     pub build_size: String,
 }
 
-impl From<ExtendMotherboard> for NewMotherboard{
+impl From<ExtendMotherboard> for NewMotherboard {
     fn from(exmb: ExtendMotherboard) -> Self {
-        NewMotherboard{
+        NewMotherboard {
             name: exmb.name.to_owned(),
             manufacturer: exmb.manufacturer.to_owned(),
             ram_slots: exmb.ram_slots.to_owned(),

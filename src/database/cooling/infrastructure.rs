@@ -11,8 +11,10 @@ use schema::cooling;
 use schema::cooling::dsl::*;
 
 impl CRUD for Cooling {
-    fn create(cool: NewCooling, conn: &DBPooledConnection) -> Result<Cooling, diesel::result::Error> {
-        
+    fn create(
+        cool: NewCooling,
+        conn: &DBPooledConnection,
+    ) -> Result<Cooling, diesel::result::Error> {
         diesel::insert_into(cooling::table)
             .values(&cool)
             .get_result(conn)

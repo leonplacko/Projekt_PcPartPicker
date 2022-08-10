@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::database::schema::build_size;
 
@@ -11,7 +11,7 @@ pub struct BuildSize {
 }
 #[derive(Insertable, Deserialize)]
 #[table_name = "build_size"]
-pub struct NewBuildSize{
+pub struct NewBuildSize {
     pub motherboard_id: Option<String>,
     pub case_id: Option<String>,
     pub size: String,

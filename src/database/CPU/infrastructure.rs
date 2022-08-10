@@ -14,7 +14,6 @@ use super::handle_socket::*;
 
 impl CRUD for CPU {
     fn create(n_cpu: ExtendCPU, conn: &DBPooledConnection) -> Result<CPU, diesel::result::Error> {
-        
         let sockt = n_cpu.socket.clone();
 
         let ins_cpu = NewCPU::from(n_cpu);
@@ -23,12 +22,12 @@ impl CRUD for CPU {
             .values(&ins_cpu)
             .get_result::<CPU>(conn);
 
-        match rez1{
+        match rez1 {
             Err(er) => Err(er),
-            Ok(value) => match handle_socket_insert(sockt, conn, value.id.clone()){
+            Ok(value) => match handle_socket_insert(sockt, conn, value.id.clone()) {
                 Ok(_) => Ok(value),
                 Err(er) => Err(er),
-            } 
+            },
         }
     }
 
@@ -51,6 +50,5 @@ impl CRUD for CPU {
 
     fn delete(cpuname: String, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
         diesel::delete(cpu.filter(name.eq(cpuname))).execute(conn)
-    
     }
 }

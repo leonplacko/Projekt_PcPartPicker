@@ -1,0 +1,160 @@
+{
+    "username": "napoleonFRA",
+    "password": "nekipas12",
+    "isadmin": true 
+}
+
+{
+    "name": "CPU 1",
+    "manufacturer": "Proizvodjac2",
+    "cores": 4,
+    "cache": "8mb l2, 6mb l3",
+    "speed": 3.56,
+    "tdp": 90,
+    "price": 1200,
+    "socket": "LGA1511"
+}
+
+{
+    "name": "CPU 2",
+    "manufacturer": "Proizvodjac1",
+    "cores": 6,
+    "cache": "6mb l2, 6mb l3",
+    "speed": 3.24,
+    "tdp": 100,
+    "price": 1500,
+    "socket": "LGA1511"
+}
+
+{
+    "name": "Motherboard 1",
+    "manufacturer": "proz3",
+    "ram_slots": 4,
+    "sata_slots": 2,
+    "nvme_slots": 1,
+    "price": 1200,
+    "socket": "LGA1511",
+    "ram_type": "DDR4",
+    "build_size": "ATX"
+}
+
+{
+    "name": "Motherboard 2",
+    "manufacturer": "proz4",
+    "ram_slots": 4,
+    "sata_slots": 2,
+    "nvme_slots": 0,
+    "price": 1500,
+    "socket": "LGA1511",
+    "ram_type": "DDR5",
+    "build_size": ATX
+}
+
+{
+    "name": "cooling 1",
+    "manufacturer": "proz5",
+    "ventilators": 3,
+    "cpu_ventilator": true,
+    "price": 500 
+}
+
+{
+    "name": "water cooling 1",
+    "manufacturer": "proz6",
+    "ventilators": null,
+    "cpu_ventilator": false,
+    "price": 1500
+}
+
+{
+    "name": "GPU 1",
+    "manufacturer": "proz7",
+    "memory": 6,
+    "memory_type": "Gddr6",
+    "tdp": 250,
+    "price": 3000
+}
+
+{
+    "name": "GPU 2",
+    "manufacturer": "proz8",
+    "memory": 8,
+    "memory_type": "Gddr6x",
+    "tdp": 350,
+    "price": 4500
+}
+
+{
+    "name": "Case 1",
+    "manufacturer": "proz9",
+    "dimensions": "560 x 670 x 320",
+    "ventilators": 1,
+    "available_vent": 5,
+    "price": 600,
+    "build_size": "ATX"
+
+}
+
+{
+    "name": "Case 2",
+    "manufacturer": "proz10",
+    "dimensions": "600 x 690 x 420",
+    "ventilators": 3,
+    "available_vent": 7,
+    "price": 850,
+    "build_size": "ATX"
+}
+
+{
+    "name": "Power unit 1",
+    "manufacturer": "proz11",
+    "power": 600,
+    "price": 700
+}
+
+{
+    "name": "Power unit 2",
+    "manufacturer": "proz12",
+    "power": 1000,
+    "price": 1200
+}
+
+{
+    "name": "RAM 1",
+    "manufacturer": "proz13",
+    "speed": 2400,
+    "capacity": 8,
+    "price": 300,
+    "slot": "DDR4"
+}
+
+{
+    "name": "RAM 2",
+    "manufacturer": "proz14",
+    "speed": 3600,
+    "capacity": 16,
+    "price": 700,
+    "slot": "DDR5"
+}
+
+{
+    "name": "Storage hdd",
+    "manufacturer": "proz15",
+    "capacity": 1000,
+    "speed": 7200,
+    "type_": "HDD",
+    "price": 700,
+    "slot": "Sata"
+}
+
+{
+    "name": "Storage ssd",
+    "manufacturer": "proz16",
+    "capacity": 1000,
+    "speed": 12000,
+    "type_": "SSD",
+    "price": 1200,
+    "slot": "NVMe"
+}
+
+socket nekreira default za mb

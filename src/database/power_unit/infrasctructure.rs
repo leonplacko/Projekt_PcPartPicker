@@ -11,8 +11,10 @@ use schema::power_unit;
 use schema::power_unit::dsl::*;
 
 impl CRUD for PowerUnit {
-    fn create(pu: NewPowerUnit, conn: &DBPooledConnection) -> Result<PowerUnit, diesel::result::Error> {
-        
+    fn create(
+        pu: NewPowerUnit,
+        conn: &DBPooledConnection,
+    ) -> Result<PowerUnit, diesel::result::Error> {
         diesel::insert_into(power_unit::table)
             .values(&pu)
             .get_result(conn)

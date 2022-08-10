@@ -4,26 +4,34 @@ use crate::database::schema;
 use crate::diesel::ExpressionMethods;
 use crate::diesel::RunQueryDsl;
 
-
 use super::contract::*;
 use super::data::*;
 use diesel::QueryDsl;
 use schema::motherboards;
 use schema::motherboards::dsl::*;
 
-use super::{
-    handle_build_size::*,
-    handle_ram_slot::*,
-    handle_socket::*,
-    handle_storage_slot::*,
-};
+use super::{handle_build_size::*, handle_ram_slot::*, handle_socket::*, handle_storage_slot::*};
 
 impl CRUD for Motherboard {
-    fn create(exmb: ExtendMotherboard, conn: &DBPooledConnection) -> Result<Motherboard, diesel::result::Error> {
-       
-        let mb_data = vec![exmb.socket.clone(), exmb.ram_type.clone(), exmb.build_size.clone(), 
-            if exmb.nvme_slots > 0 {String::from("NVMe")} else {String::from("None")},
-            if exmb.sata_slots > 0 {String::from("SATA")} else {String::from("None")}];
+    fn create(
+        exmb: ExtendMotherboard,
+        conn: &DBPooledConnection,
+    ) -> Result<Motherboard, diesel::result::Error> {
+        let mb_data = vec![
+            exmb.socket.clone(),
+            exmb.ram_type.clone(),
+            exmb.build_size.clone(),
+            if exmb.nvme_slots > 0 {
+                String::from("NVMe")
+            } else {
+                String::from("None")
+            },
+            if exmb.sata_slots > 0 {
+                String::from("Sata")
+            } else {
+                String::from("None")
+            },
+        ];
 
         let mb = NewMotherboard::from(exmb);
 
@@ -31,13 +39,25 @@ impl CRUD for Motherboard {
             .values(&mb)
             .get_result::<Motherboard>(conn);
 
-        match res1{
+        match res1 {
             Err(er) => Err(er),
-            Ok(val) => match (handle_build_size_insert(mb_data[2].clone(), conn, val.id.clone()), handle_ram_slot_insert(mb_data[1].clone(), conn, val.id.clone()), 
-                                        handle_storage_slot_insert(mb_data[4].clone(), mb_data[3].clone(), conn, val.id.clone()), handle_socket_insert(mb_data[0].clone(), conn, val.id.clone())){
+            Ok(val) => match (
+                handle_build_size_insert(mb_data[2].clone(), conn, val.id.clone()),
+                handle_ram_slot_insert(mb_data[1].clone(), conn, val.id.clone()),
+                handle_storage_slot_insert(
+                    mb_data[4].clone(),
+                    mb_data[3].clone(),
+                    conn,
+                    val.id.clone(),
+                ),
+                handle_socket_insert(mb_data[0].clone(), conn, val.id.clone()),
+            ) {
                 (Ok(_), Ok(_), Ok(_), Ok(_)) => Ok(val),
-                (Err(er), _, _, _) | (Ok(_), Err(er), _, _) | (Ok(_), Ok(_), Err(er), _) | (Ok(_), Ok(_), Ok(_), Err(er)) => Err(er)
-            } 
+                (Err(er), _, _, _)
+                | (Ok(_), Err(er), _, _)
+                | (Ok(_), Ok(_), Err(er), _)
+                | (Ok(_), Ok(_), Ok(_), Err(er)) => Err(er),
+            },
         }
     }
 

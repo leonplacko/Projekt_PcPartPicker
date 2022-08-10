@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::database::schema::ram;
 
@@ -22,7 +22,7 @@ pub struct NewRAM {
     pub price: f32,
 }
 #[derive(Deserialize)]
-pub struct ExtendRAM{
+pub struct ExtendRAM {
     pub name: String,
     pub manufacturer: String,
     pub speed: i32,
@@ -31,13 +31,13 @@ pub struct ExtendRAM{
     pub slot: String,
 }
 
-impl From<ExtendRAM> for NewRAM{
+impl From<ExtendRAM> for NewRAM {
     fn from(exram: ExtendRAM) -> Self {
-        NewRAM { 
-            name: exram.name.to_owned(), 
-            manufacturer: exram.manufacturer.to_owned(), 
-            speed: exram.speed.to_owned(), 
-            capacity: exram.capacity.to_owned(), 
+        NewRAM {
+            name: exram.name.to_owned(),
+            manufacturer: exram.manufacturer.to_owned(),
+            speed: exram.speed.to_owned(),
+            capacity: exram.capacity.to_owned(),
             price: exram.price.to_owned(),
         }
     }

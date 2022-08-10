@@ -1,3 +1,4 @@
+use actix_identity::Identity;
 use r2d2::{Pool, PooledConnection};
 use rand::{thread_rng, seq::SliceRandom};
 use diesel::{
@@ -38,6 +39,7 @@ pub type DBPool = Pool<ConnectionManager<PgConnection>>;
 pub type DBPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 fn deploy_build(rams: Vec<String>, storagess: Vec<String>, coolings: Vec<String>, deploydata: Vec<String>, myprice: f32) -> HttpResponse{
+        
     let genbuild = GeneratedBuild{
         motherboard_name: deploydata[0].clone(),
         cpu_name: deploydata[1].clone(),
@@ -70,15 +72,30 @@ fn get_cheap(pool: &DBPooledConnection) -> Result<f32, diesel::result::Error>{
 
 
 
-pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRequest>) -> HttpResponse{
+pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRequest>, ident: Identity) -> HttpResponse{
     let pool = conn.get().expect("Error establishing pool");
     
     let username = path.into_inner();
+
+    let myid = match ident.identity(){
+        Some(val) => val,
+        None => String::from("None"),
+    };
+
+    let iduser = myid.split(":").collect::<Vec<&str>>()[0];
+        
+    if iduser == "None" || iduser != username{
+        return HttpResponse::Unauthorized().content_type("application/json").json("No user login or invalid user")
+    }
+    
+    
     
     let (req_price, prio) = match data.0.priority{
         Some(val) => (data.0.price, val),
         None => (data.0.price, String::from("")),
     };
+
+    //sql query sa group byom se može napravit
 
     let join_table_data: Result<Vec<JoinedData>, diesel::result::Error> = 
         motherboards.inner_join(socket.inner_join(cpu))
@@ -90,9 +107,11 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
         .load::<JoinedData>(&pool);
 
         
+    
     match join_table_data{
         Err(er) => ErrorHandler::from(er).get_response(),
         Ok(vector) => {
+
             let mut priced_data: Vec<(Motherboard, String, String, String, String, f32)> = Vec::new();
 
             let cheap_p = get_cheap(&pool).unwrap();
@@ -101,6 +120,8 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
                 0 => false,
                 _ => true,
             };
+
+            
 
             if !priostatus || prio == "low"{
 
@@ -125,7 +146,7 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
                 }
 
             }else if prio == "high"{
-                
+
                 for val in vector{
                     let temp_price1 = val.cpu_price + val.case_price + val.mb_price + (val.ram_price * 4.0) + val.stor_price;
                     if  temp_price1 + cheap_p < req_price{
@@ -136,6 +157,7 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
                 }
             }
         
+            
 
             if priced_data.len() == 0{
                 return HttpResponse::Ok().content_type("aplication/json").json("Unable to generate build with proper price")
@@ -145,7 +167,7 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
             
             
             for data in priced_data{
-                let temp_price2: f32 = 0.0;
+                
                 
                 let mut cool_vent = cooling.filter(cooling::cpu_ventilator.eq(Some(true)))
                 .filter(cooling::price.between(0.0, req_price - data.5))
@@ -161,17 +183,15 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
                 pu_s.shuffle(&mut thread_rng());
 
                 if cool_vent.len() == 0 || gpu_s.len() == 0 || pu_s.len() == 0{
-                    return HttpResponse::Ok().content_type("application/json").json("Wasn't able to generate build, first phase passed")
+                    continue;
                 }
                 
-                let mut cool_water = cooling.filter(cooling::ventilators.eq::<Option<i32>>(None))
+                let mut cool_water = cooling.filter(cooling::ventilators.is_null())
                 .filter(cooling::price.between(0.0, req_price - data.5))
                 .load::<Cooling>(&pool).unwrap();
                 cool_water.shuffle(&mut thread_rng());
 
                 let my_mb = data.0;
-
-
 
                 for gp in &gpu_s{
                     for cool in &cool_vent{
@@ -203,7 +223,7 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
                                     let watercool_name = cool_water[0].name.clone();
                                     let rams = vec![data.2.clone(), data.2.clone(), data.2.clone(), data.2.clone()];
                                     let storagess = vec![data.3.clone(), data.3.clone()];
-                                    let coolings = vec![cool.name.clone(), watercool_name];
+                                    let coolings = vec![watercool_name];
                                     return deploy_build(rams, storagess, coolings, deploydata, myprice);
                                 }
                                 
@@ -214,7 +234,6 @@ pub async fn gen_price(path: Path<String>, conn: Data<DBPool>, data: Json<UserRe
                 }
 
             }           
-            
             
             return HttpResponse::Ok().content_type("application/json").json("Wasn't able to generate build")
         },

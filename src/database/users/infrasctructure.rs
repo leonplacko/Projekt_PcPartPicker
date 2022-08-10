@@ -4,7 +4,6 @@ use crate::database::schema;
 use crate::diesel::ExpressionMethods;
 use crate::diesel::RunQueryDsl;
 
-
 use super::contract::*;
 use super::data::*;
 use diesel::r2d2::ConnectionManager;
@@ -18,7 +17,10 @@ use std::hash::{Hash, Hasher};
 pub type DBPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 
 impl CRUD for User {
-    fn create(mut new_user: NewUser, conn: &DBPooledConnection) -> Result<User, diesel::result::Error> {
+    fn create(
+        mut new_user: NewUser,
+        conn: &DBPooledConnection,
+    ) -> Result<User, diesel::result::Error> {
         let mut hasher = DefaultHasher::new();
         new_user.password.hash(&mut hasher);
 
@@ -35,7 +37,10 @@ impl CRUD for User {
         users.load::<User>(conn)
     }
 
-    fn read_user(_username: String, conn: &DBPooledConnection) -> Result<User, diesel::result::Error>{
+    fn read_user(
+        _username: String,
+        conn: &DBPooledConnection,
+    ) -> Result<User, diesel::result::Error> {
         users.filter(username.eq(_username)).first(conn)
     }
 

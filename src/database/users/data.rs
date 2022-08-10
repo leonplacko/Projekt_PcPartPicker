@@ -17,7 +17,7 @@ pub struct NewUser {
     pub isadmin: bool,
 }
 #[derive(Queryable, Deserialize)]
-pub struct UserLog{
+pub struct UserLog {
     pub username: String,
     pub password: String,
 }

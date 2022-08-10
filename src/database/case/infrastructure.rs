@@ -12,10 +12,8 @@ use schema::pc_case::dsl::*;
 
 use super::handle_build_size::*;
 
-
 impl CRUD for Case {
     fn create(case: ExtendCase, conn: &DBPooledConnection) -> Result<Case, diesel::result::Error> {
-        
         let buildsize = case.build_size.clone();
 
         let newcase = NewCase::from(case);
@@ -24,14 +22,12 @@ impl CRUD for Case {
             .values(&newcase)
             .get_result::<Case>(conn);
 
-        
-
-        match rez1{
+        match rez1 {
             Err(er) => Err(er),
-            Ok(value) =>  match handle_build_size_insert(buildsize, conn, value.id.clone()){
+            Ok(value) => match handle_build_size_insert(buildsize, conn, value.id.clone()) {
                 Ok(_) => Ok(value),
                 Err(er) => Err(er),
-            } 
+            },
         }
     }
 
@@ -53,6 +49,5 @@ impl CRUD for Case {
 
     fn delete(_name: String, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
         diesel::delete(pc_case.filter(name.eq(&_name))).execute(conn)
-             
     }
 }

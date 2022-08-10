@@ -17,7 +17,10 @@ impl CRUD for Socket {
             .get_result(conn)
     }
 
-    fn read(sockt: String, conn: &DBPooledConnection) -> Result<Vec<Socket>, diesel::result::Error> {
+    fn read(
+        sockt: String,
+        conn: &DBPooledConnection,
+    ) -> Result<Vec<Socket>, diesel::result::Error> {
         socket.filter(socket_type.eq(&sockt)).load::<Socket>(conn)
     }
 
@@ -31,7 +34,11 @@ impl CRUD for Socket {
         .get_result(conn)
     }
 
-    fn delete(mbid: Option<String>, cpuid: Option<String>, conn: &DBPooledConnection) -> Result<usize, diesel::result::Error> {
+    fn delete(
+        mbid: Option<String>,
+        cpuid: Option<String>,
+        conn: &DBPooledConnection,
+    ) -> Result<usize, diesel::result::Error> {
         diesel::delete(
             socket
                 .filter(motherboard_id.eq(mbid))

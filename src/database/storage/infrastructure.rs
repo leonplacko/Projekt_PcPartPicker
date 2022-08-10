@@ -12,8 +12,10 @@ use schema::storages;
 use schema::storages::dsl::*;
 
 impl CRUD for Storage {
-    fn create(exstor: ExtendStorage, conn: &DBPooledConnection) -> Result<Storage, diesel::result::Error> {
-        
+    fn create(
+        exstor: ExtendStorage,
+        conn: &DBPooledConnection,
+    ) -> Result<Storage, diesel::result::Error> {
         let storslot = exstor.slot.clone();
 
         let stor = NewStorage::from(exstor);
@@ -22,12 +24,12 @@ impl CRUD for Storage {
             .values(&stor)
             .get_result::<Storage>(conn);
 
-        match res1{
+        match res1 {
             Err(er) => Err(er),
-            Ok(val) => match handle_storage_slot_insert(storslot, conn, val.id.clone()){
+            Ok(val) => match handle_storage_slot_insert(storslot, conn, val.id.clone()) {
                 Err(er) => Err(er),
-                Ok(_) => Ok(val)
-            }
+                Ok(_) => Ok(val),
+            },
         }
     }
 
